@@ -3,7 +3,6 @@ from django.db import models
 
 class Collection(models.Model):
     title = models.CharField(max_length=255)
-    featured_product = models.ForeignKey('Product', on_delete=models.CASCADE, related_name='+')
 
 class Promotion(models.Model):
     description=models.CharField(max_length=255)
