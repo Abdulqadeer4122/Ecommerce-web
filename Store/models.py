@@ -4,6 +4,9 @@ from django.db import models
 class Collection(models.Model):
     title = models.CharField(max_length=255)
 
+    def __str__(self):
+        return self.title
+
 class Promotion(models.Model):
     description=models.CharField(max_length=255)
 
@@ -11,11 +14,13 @@ class Promotion(models.Model):
 class Product(models.Model):
     title = models.CharField(max_length=255)
     description = models.CharField(max_length=255)
-    slug=models.SlugField(default='-')
+    slug=models.SlugField()
     unit_price = models.DecimalField(max_digits=6, decimal_places=2)
     inventory = models.IntegerField()
     last_update = models.DateTimeField(auto_now=True)
     collection = models.ForeignKey(Collection, on_delete=models.PROTECT)
+    def __str__(self):
+        return self.title
 
 
 class Customer(models.Model):
@@ -35,6 +40,9 @@ class Customer(models.Model):
     birth_date = models.DateField(null=True, blank=True)
     membership = models.CharField(max_length=1, choices=MEMBERSHIP_CHOICES, default=MEMBERSHIP_BRONZE)
 
+    def __str__(self):
+        return "{} {}".format(self.first_name,self.last_name)
+
 
 class Address(models.Model):
     street = models.CharField(max_length=255)
@@ -53,11 +61,14 @@ class Order(models.Model):
     ]
     placed_at = models.DateTimeField(auto_now_add=True)
     payment_status = models.CharField(max_length=1, choices=PAYMENT_STATUS_CHOICE, default=PENDING)
-    customer = models.ForeignKey(Customer, on_delete=models.PROTECT)
+    customer = models.ForeignKey(Customer, on_delete=models.PROTECT,related_name='c_order')
+
+    def __str__(self):
+        return self.payment_status
 
 
 class OrderItem(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.PROTECT)
+    order = models.ForeignKey(Order, on_delete=models.PROTECT,related_name='order_item')
     product = models.ForeignKey(Product, on_delete=models.PROTECT)
     quantity = models.PositiveSmallIntegerField()
     unit_price = models.DecimalField(max_digits=6, decimal_places=2)
