@@ -27,15 +27,25 @@ class ProductAdmin(admin.ModelAdmin):
         return Product.collection.title
 
 
+@admin.register(Reviews)
+class ReviewAdmin(admin.ModelAdmin):
+    list_display = ('id',"name", "desc", "date", "product")
+    search_fields = ['name__istartswith','product__istartswith']
+    ordering = ['id']
 # Register your models here.
 
 @admin.register(Customer)
 class CustomerAdmin(admin.ModelAdmin):
-    list_display = ("first_name", "last_name", "membership", "email", "phone")
-    search_fields = ['first_name__istartswith','last_name__istartswith']
+    list_display = ("first_name", "last_name", "membership", "email", "phone",'get_order_count')
+    search_fields = ['user__first_name__istartswith','user__last_name__istartswith']
     list_editable = ['membership']
-    ordering = ['first_name', 'last_name']
+    ordering = ['user__first_name', 'user__last_name']
     list_per_page = 10
+
+    def get_order_count(self, obj):
+        return obj.c_order.count()
+
+    get_order_count.short_description = 'Order Count'
 
 
 @admin.register(Order)
@@ -70,8 +80,11 @@ class CollectionModel(admin.ModelAdmin):
             product_count=Count('product')
         )
 
-
-admin.site.register(Cart)
-admin.site.register(CartItem)
+@admin.register(Cart)
+class CartAdmin(admin.ModelAdmin):
+    list_display = ['created_at']
+@admin.register(CartItem)
+class CartItemAdmin(admin.ModelAdmin):
+    list_display = ['product','quantity']
 
 admin.site.register(OrderItem)

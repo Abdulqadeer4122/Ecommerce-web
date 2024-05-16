@@ -21,5 +21,7 @@ admin.site.site_header="Ecommerce Admin Penal"
 admin.site.index_title="Admin"
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('store/', include('Store.urls'))
+    path('store/', include('Store.urls')),
+    path(r'auth/', include('djoser.urls')),
+    path(r'auth/', include('djoser.urls.jwt')),
 ]
